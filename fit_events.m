@@ -70,8 +70,6 @@ end
 %% Setting up transition matrix
 % Stay or advance, with final sink state
 Pi = [1 zeros(1,nEvents-1)];
-P = [0.5*diag(ones(nEvents,1)) + 0.5*diag(ones(nEvents-1,1),1) ...
-    [zeros(nEvents-1,1);0.5]];
 EndPi = [zeros(1,nEvents-1) 1];
 
 %% Main fitting loop
@@ -102,6 +100,10 @@ while (stepnum <= maxSteps)
             logprob = logprob_obs(trainingData{i}, ...
                                meanPatterns, iterationVar);
         end
+        T = size(trainingData{i},2);
+        P = [(1-(nEvents-1)/T)*diag(ones(nEvents,1)) + ...
+            (nEvents-1)/T*diag(ones(nEvents-1,1),1) ...
+            [zeros(nEvents-1,1);(nEvents-1)/T]];
         [loggamma{i}, LL(i)] = forward_backward_log(logprob, Pi, EndPi, P);
     end
     
