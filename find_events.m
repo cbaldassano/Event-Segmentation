@@ -15,11 +15,12 @@ function [loggamma, loglikelihood] = find_events(eventPatterns, eventVar, testin
 %    loglikelihood: p(data|model), measure of model fit
 
 %% Setting up transition matrix
+T = size(testingData,2);
 nEvents = size(eventPatterns,2);
 % Stay or advance, with final sink state
 Pi = [1 zeros(1,nEvents-1)];
-P = [0.5*diag(ones(nEvents,1)) + 0.5*diag(ones(nEvents-1,1),1) ...
-    [zeros(nEvents-1,1);0.5]];
+P = [(1-(nEvents-1)/T)*diag(ones(nEvents,1)) + (nEvents-1)/T*diag(ones(nEvents-1,1),1) ...
+    [zeros(nEvents-1,1);(nEvents-1)/T]];
 EndPi = [zeros(1,nEvents-1) 1];
 
 %% Find events
